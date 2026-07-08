@@ -20,6 +20,10 @@ import {
   getGitLabOAuthAuthorizationURL,
   getGitLabOAuthRedirectUri,
   requestOAuthTokenGitLab,
+  getCodebergAPIEndpoint,
+  getCodebergOAuthAuthorizationURL,
+  getCodebergOAuthRedirectUri,
+  requestOAuthTokenCodeberg,
 } from '../../lib/api'
 
 import { TypedBaseStore } from './base-store'
@@ -304,6 +308,9 @@ export class SignInStore extends TypedBaseStore<SignInState | null> {
       } else if (oauthProvider === 'gitlab') {
         const redirectUri = getGitLabOAuthRedirectUri()
         shell.openExternal(getGitLabOAuthAuthorizationURL(redirectUri))
+      } else if (oauthProvider === 'codeberg') {
+        const redirectUri = getCodebergOAuthRedirectUri()
+        shell.openExternal(getCodebergOAuthAuthorizationURL(redirectUri))
       } else {
         shell.openExternal(getOAuthAuthorizationURL(endpoint, csrfToken))
       }
@@ -341,6 +348,8 @@ export class SignInStore extends TypedBaseStore<SignInState | null> {
       return 'bitbucket'
     } else if (endpoint === getGitLabAPIEndpoint()) {
       return 'gitlab'
+    } else if (endpoint === getCodebergAPIEndpoint()) {
+      return 'codeberg'
     } else {
       return 'github'
     }
@@ -401,6 +410,11 @@ export class SignInStore extends TypedBaseStore<SignInState | null> {
         return await requestOAuthTokenBitbucket(code)
       case 'gitlab':
         return await requestOAuthTokenGitLab(code, getGitLabOAuthRedirectUri())
+      case 'codeberg':
+        return await requestOAuthTokenCodeberg(
+          code,
+          getCodebergOAuthRedirectUri()
+        )
       default:
         assertNever(oauthProvider, 'Unexpected oauth provider')
     }
@@ -447,6 +461,21 @@ export class SignInStore extends TypedBaseStore<SignInState | null> {
     }
 
     const endpoint = getGitLabAPIEndpoint()
+    this.setState({
+      kind: SignInStep.Authentication,
+      endpoint,
+      error: null,
+      loading: false,
+      resultCallback: resultCallback ?? noop,
+    })
+  }
+
+  public beginCodebergSignIn(resultCallback?: (result: SignInResult) => void) {
+    if (this.state !== null) {
+      this.reset()
+    }
+
+    const endpoint = getCodebergAPIEndpoint()
     this.setState({
       kind: SignInStep.Authentication,
       endpoint,

@@ -22,6 +22,8 @@ export function createCommitURL(
         return `${baseURL}/commits/${SHA}`
       case 'gitlab':
         return `${baseURL}/-/commit/${SHA}`
+      case 'codeberg':
+        return `${baseURL}/commit/${SHA}`
       default:
         assertNever(
           gitHubRepository.type,
@@ -38,6 +40,11 @@ export function createCommitURL(
       return `${baseURL}/commits/${SHA}#chg-${filePath}`
     case 'gitlab':
       return `${baseURL}/-/commit/${SHA}#diff-${fileHash}`
+    case 'codeberg': {
+      // Forgejo anchors diffs by the SHA-1 hash of the file path
+      const sha1Hash = crypto.createHash('sha1').update(filePath).digest('hex')
+      return `${baseURL}/commit/${SHA}#diff-${sha1Hash}`
+    }
     default:
       assertNever(
         gitHubRepository.type,

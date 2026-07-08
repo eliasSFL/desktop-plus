@@ -6,7 +6,7 @@ This is an **up-to-date** fork of [GitHub Desktop](https://desktop.github.com) w
 > This is a community-maintained project. It **is not** an official GitHub product. 
 
 ## Highlights 👀
-| <h4>Search commits by title, message, tag, or hash</h4> | <h4>Add multiple GitHub, Bitbucket & GitLab accounts</h4> |
+| <h4>Search commits by title, message, tag, or hash</h4> | <h4>Add multiple GitHub, Bitbucket, GitLab & Codeberg accounts</h4> |
 | :---: | :---: |
 | ![Commit search](docs/assets/desktop-plus-demo-search.webp) | ![Multiple accounts](docs/assets/desktop-plus-demo-multiaccount.webp) |
 | <h4>Create multiple stashes per branch</h4> | <h4>Visualize the Commit Graph</h4> |
@@ -28,11 +28,11 @@ This is an **up-to-date** fork of [GitHub Desktop](https://desktop.github.com) w
 - Support for **multiple windows**: open multiple repositories in separate windows, or the same repository in multiple windows (e.g. to view different files at the same time).  
   Select "File" > "Open new window" or press `Ctrl+Alt+N`/`Cmd+Alt+N`. You can also right-click on a repository in the list and select "Open repository in new window".
 
-- **Bitbucket** and **GitLab** integration:
+- **Bitbucket**, **GitLab** and **Codeberg** integration:
   - Clone repositories from within the app.
   - Preview and create pull requests.
   - View pull requests status, including checks.
-  - Display a commit or PR in Bitbucket/GitLab (web browser).
+  - Display a commit or PR in Bitbucket/GitLab/Codeberg (web browser).
   - Correctly set repository owner (instead of displaying "Other").
 
   The integration is enabled automatically for the corresponding repositories if you are logged in to your account. 

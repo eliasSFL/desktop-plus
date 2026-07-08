@@ -8920,6 +8920,10 @@ export class AppStore extends TypedBaseStore<IAppState> {
     return this.signInStore.beginGitLabSignIn(resultCallback)
   }
 
+  public _beginCodebergSignIn(resultCallback?: (result: SignInResult) => void) {
+    return this.signInStore.beginCodebergSignIn(resultCallback)
+  }
+
   public _setSignInEndpoint(url: string): Promise<void> {
     return this.signInStore.setEndpoint(url)
   }
@@ -9464,6 +9468,7 @@ export class AppStore extends TypedBaseStore<IAppState> {
       github: `${baseRepoUrl}/pull/${pr.pullRequestNumber}`,
       bitbucket: `${baseRepoUrl}/pull-requests/${pr.pullRequestNumber}`,
       gitlab: `${baseRepoUrl}/merge_requests/${pr.pullRequestNumber}`,
+      codeberg: `${baseRepoUrl}/pulls/${pr.pullRequestNumber}`,
     }
 
     const type = pr.base.gitHubRepository.type
@@ -9568,6 +9573,21 @@ export class AppStore extends TypedBaseStore<IAppState> {
       return value ? encodeURIComponent(name) + '=' + value : ''
     }
 
+    // Forgejo's compare page doubles as the create-PR page. When contributing
+    // from a fork, the compare must be opened on the parent repository with a
+    // head of the form owner/repo:branch.
+    const codebergBaseUrl =
+      (isForkContributingToParent ? parent?.htmlURL : null) ?? htmlURL
+    const codebergBase =
+      baseBranch !== undefined
+        ? encodeURIComponent(baseBranch.nameWithoutRemote)
+        : ''
+    const codebergHead =
+      (isForkContributingToParent ? `${owner.login}/${name}:` : '') +
+      encodeURIComponent(
+        compareBranch.upstreamWithoutRemote ?? compareBranch.nameWithoutRemote
+      )
+
     // prettier-ignore
     const PR_URLS = {
       bitbucket:
@@ -9576,6 +9596,8 @@ export class AppStore extends TypedBaseStore<IAppState> {
         `${htmlURL}/pull/new/${encodedBaseBranch ? encodedBaseBranch + '...' : ''}${encodedCompareBranch}`,
       gitlab:
         `${htmlURL}/merge_requests/new?${param('merge_request[source_branch]', encodedCompareBranch)}&${param('merge_request[target_branch]', encodedBaseBranch)}`,
+      codeberg:
+        `${codebergBaseUrl}/compare/${codebergBase ? codebergBase + '...' : ''}${codebergHead}`,
     }
     await this._openInBrowser(PR_URLS[type])
   }
